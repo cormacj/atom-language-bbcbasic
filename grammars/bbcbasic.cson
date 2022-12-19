@@ -1,1014 +1,115 @@
-scopeName: 'source.bbc'
-fileTypes: [
-  '.bas'
+'fileTypes': [
+  'bas'
+  'BAS'
 ]
-name: 'BBC Basic'
-patterns: [
-  { include: '#line' }
-]
-repository:
-  invalid:
-    match: '[^\\s:]+'
-    name: 'invalid.illegal.bbc'
-  line:
-    match: '^\\s*(\\d+)?\\s*(.*)'
-    captures:
+'name': 'BBC Basic'
+'patterns': [
+  {
+    'match': '\\b(?i:(P\.|ELSE|THEN|WHILE|CASE|ENDCASE|ENDWHILE|ENDIF|OTHERWISE|END|TO|SOUND|BPUT|CALL|CHAIN|CLEAR|CLOSE|CLG|CLS|DATA|DEF|DIM|DRAW|END|ENDPROC|ENVELOPE|FOR|GOSUB|GOTO|GCOL|IF|INPUT|LET|LOCAL|MODE|MOVE|NEXT|ON|VDU|PLOT|PRINT|PROC|READ|REPEAT|REPORT|REPORT$|RESTORE|RETURN|RUN|STOP|COLOUR|COLOR|TRACE|UNTIL|WIDTH|OSCLI|PRINT|P\\.|CIRCLE|ELLIPSE|FILL|MOUSE|ORIGIN|QUIT|RECTANGLE|SWAP|SYS|TINT|WAIT|INSTALL|PRIVATE|BY|EXIT|ERROR|LINE|OFF|STEP|SPC|TAB|OPENIN|PTR|PAGE|TIME|TIME$|LOMEM|HIMEM|ABS|ACS|ADVAL|ASC|ASN|ATN|BGET|COS|COUNT|DEG|ERL|ERR|EVAL|EXP|EXT|FALSE|GET|INKEY|INSTR|INT|LEN|LN|LOG|NOT|OPENUP|OPENOUT|PI|POINT|POS|RAD|RND|SGN|SIN|SQR|TAN|TOP|TRUE|USR|VAL|VPOS|CHR\$|GET$|INKEY$|LEFT$|MID$|RIGHT$|STR$|STRING$|A\\.|AU\\.|B\\.|BP\\.|CA\\.|CH\\.|CHR\\.|CL\\.|CLO\\.|C\\.|COU\\.|D\\.|DEL\\.|DR\\.|E\\.|EL\\.|END\\.|ENV\\.|EV\\.|FA\\.|F\\.|GC\\.|G\\.|H\\.|INK\\.|I\\.|INS\\.|L\\.|LO\\.|LOC\\.|LOM\\.|M\\.|MO\\.|MOV\\.|N\\.|O\\.|OP\\.|OPENO\\.|OPENU\\.|PA\\.|PL\\.|PO\\.|P.|PRO\\.|PT\\.|REA\\.|REN\\.|REP\\.|REPO\\.|RES\\.|R\\.|RI\\.|SA\\.|SO\\.|S\\.|STO\\.|STR\\.|STRI\\.|T\\.|TH\\.|TI\\.|TR\\.|U\\.|V\\.|VP\\.|W\\.))\\b'
+    'name': 'keyword.control.bbcbasic'
+  }
+  {
+    'captures':
       '1':
-        name: 'meta.line.number.bbc'
+        'name': 'storage.type.prototype.bbcbasic'
       '2':
-        patterns: [
-          {
-            name: 'meta.multi-statement.punctation.bbc'
-            match: '\\s*:\\s*'
-          }
-          {
-            include: '#statement'
-          }
-        ]
-  statement:
-    patterns: [
-      {
-        begin: '(PROC)([A-Za-z]+[A-Za-z0-9_]*)'
-        beginCaptures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            name: 'entity.function.name.bbc'
-        patterns: [
-          { include: '#stringVariableName' }
-          { include: '#numericVariableName' }
-          { match: ',' }
-        ]
-        end: '(?=:)'
-      }
-      { include: '#keywords' }
-      { include: '#assignment' }
-      {
-        match: '\\s*[=](.+)'
-        captures:
-          1:
-            patterns: [
-              { include: '#stringVariableName' }
-              { include: '#integerVariableName' }
-              { include: '#numericVariableName' }
-            ]
-      }
-      { include: '#starCommands' }
-      { include: '#invalid' }
-    ]
-  starCommands:
-    begin: '(\\*[A-Z]+)\\s*'
-    beginCaptures:
-      1:
-        name: 'support.function.bbc'
-    patterns: [
-      { include: '#numericSource' }
-    ]
-    end: '(?=:)'
-  assignment:
-    patterns: [
-      {
-        name: 'meta.string-assignment.bbc'
-        begin: '(LET\\s*)?([A-Za-z]+[0-9A-Za-z_]*[$])\\s*=\\s*'
-        beginCaptures:
-          1:
-            name: 'keyword.assignment.bbc'
-          2:
-            patterns: [
-              { include: '#stringVariableName' }
-            ]
-        end: '\\:'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-      {
-        name: 'meta.integer-assignment.bbc'
-        begin: '(LET\\s*)?(([A-Za-z]+[0-9A-Za-z_]*|@)[%])\\s*=\\s*'
-        beginCaptures:
-          1:
-            name: 'keyword.assignment.cs'
-          2:
-            patterns: [
-              { include: '#integerVariableName' }
-            ]
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-        end: '\\:'
-      }
-      {
-        name: 'meta.real-assignment.bbc'
-        begin: '(LET\\s*)?([A-Za-z]+[0-9A-Za-z_]*)\\s*=\\s*'
-        beginCaptures:
-          1:
-            name: 'keyword.assignment.cs'
-          2:
-            patterns: [
-              { include: '#numericVariableName' }
-            ]
-        end: '\\:'
-        patterns: [
-          { include: '#numericSource' }
-        ]
-      }
-    ]
-  keywords:
-    patterns: [
-      {
-        match: '(REM)(.*)'
-        captures:
-          1:
-            name: 'keyword.rem.bbc'
-          2:
-            name: 'comment.line.bbc'
-      }
-      {
-        name: 'meta.for.statement.bbc'
-        match: '(FOR)\\s*([a-zA-Z]+[a-zA-Z0-9]*[%]?)\\s*=(.+)(TO)(.+)(STEP)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#integerVariableName' }
-              { include: '#numericVariableName' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          4:
-            name: 'keyword.control.bbc'
-          5:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          6:
-            name: 'keyword.control.bbc'
-          7:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        name: 'meta.for.statement.bbc'
-        match: '(FOR)\\s*([a-zA-Z]+[a-zA-Z0-9]*[%]?)\\s*=(.+)(TO)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#integerVariableName' }
-              { include: '#numericVariableName' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          4:
-            name: 'keyword.control.bbc'
-          5:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        name: 'meta.print-input.block.bbc'
-        begin: '(PRINT|INPUT)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-        patterns: [
-          { include: '#formatFunctions' }
-          { include: '#stringSource' }
-          { include: '#numericSource' }
-          { include: '#invalid' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(CHAIN|LOAD|SAVE)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        match: '(CLEAR|CLG|CLS|END\\s*PROC|END|STOP)\\s*'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-      }
-      {
-        match: '(NEXT)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#integerVariableName' }
-              { include: '#numericVariableName' }
-            ]
-      }
-      {
-        begin: '(CLOSE\\s*#|COLOUR|MODE|WIDTH)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-        end: '(?=:)'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        name: 'keyword.io.bbc'
-        begin: '(DRAW|GCOL|MOVE)\\s*(.+?)\\s*,\\s*(.+)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-        end: '(?=:)'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        name: 'keyword.io.bbc'
-        begin: '(PLOT)\\s*(.+)\\s*,\\s*(.+),\\s*(.+)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          4:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-        end: '(?=:)'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        begin: '(MODE)(.+)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-        end: '(?=:)'
-      }
-      {
-        match: '(GOSUB|GOTO)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              {
-                match: '\\s*[0-9]+\\b'
-                name: 'meta.line.number.bbc'
-              }
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: 'RUN|RETURN'
-        name: 'keyword.control.bbc'
-      }
-      {
-        match: '(BPUT\\s*#)(.+),([^:]+)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericVariableName' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        begin: '(CALL)\\s*([^,:]+)'
-        beginCaptures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-        patterns: [
-          { include: ',' }
-          { include: '#stringSource' }
-          { include: '#numericSource' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(LOCAL)\\s*'
-        beginCaptures:
-          1:
-            name: 'keyword.bbc'
-        patterns: [
-          { include: ',' }
-          { include: '#stringVariableName' }
-          { include: '#integerVariableName' }
-          { include: '#numericVariableName' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(RESTORE)([^:]*)'
-        beginCaptures:
-          1:
-            name: 'keyword.data.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-        end: '(?=:)'
-      }
-      {
-        match: 'TRACE\\s*(ON|OFF)'
-        name: 'keyword.control.bbc'
-      }
-      {
-        match: '(TRACE)\\s*([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: 'ON\\s*ERROR\\s*OFF|REPORT'
-        name: 'keyword.control.bbc'
-      }
-      {
-        match: '(ON\\s*ERROR)([^:]*)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#statement' }
-            ]
-      }
-      {
-        match: '(ON)\\s*([A-Za-z]+[A-Za-z0-9]*)\\s*(GOTO|GOSUB)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#numericVariableName' }
-            ]
-          3:
-            name: 'keyword.control.bbc'
-          4:
-            patterns: [
-              { match: ',' }
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(REPEAT)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#statement' }
-            ]
-      }
-      {
-        match: '(UNTIL)([^:]+)'
-        captures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            patterns: [
-              { include: '#condition' }
-            ]
-      }
-      {
-        name: 'keyword.control.bbc'
-        begin: 'IF(.+)THEN(.+)ELSE(.+)'
-        beginCaptures:
-          1:
-            patterns: [
-              { include: '#condition' }
-            ]
-          2:
-            patterns: [
-              { include: '#statement' }
-            ]
-          3:
-            patterns: [
-              { include: '#statement' }
-            ]
-        end: '(?=:)'
-      }
-      {
-        name: 'keyword.control.bbc'
-        begin: 'IF(.+)\\s+THEN(.*)'
-        beginCaptures:
-          1:
-            patterns: [
-              { include: '#condition' }
-            ]
-          2:
-            patterns: [
-              { include: '#statement' }
-            ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(ENVELOPE)\\s*(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+?),(.+)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [ { include: '#numericOnlySource' } ]
-          3:
-            patterns: [ { include: '#numericOnlySource' } ]
-          4:
-            patterns: [ { include: '#numericOnlySource' } ]
-          5:
-            patterns: [ { include: '#numericOnlySource' } ]
-          6:
-            patterns: [ { include: '#numericOnlySource' } ]
-          7:
-            patterns: [ { include: '#numericOnlySource' } ]
-          8:
-            patterns: [ { include: '#numericOnlySource' } ]
-          9:
-            patterns: [ { include: '#numericOnlySource' } ]
-          10:
-            patterns: [ { include: '#numericOnlySource' } ]
-          11:
-            patterns: [ { include: '#numericOnlySource' } ]
-          12:
-            patterns: [ { include: '#numericOnlySource' } ]
-          13:
-            patterns: [ { include: '#numericOnlySource' } ]
-          14:
-            patterns: [ { include: '#numericOnlySource' } ]
-          15:
-            patterns: [ { include: '#numericOnlySource' } ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(SOUND)\\s*(.+?),(.+?),(.+?),(.+)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [ { include: '#numericOnlySource' } ]
-          3:
-            patterns: [ { include: '#numericOnlySource' } ]
-          4:
-            patterns: [ { include: '#numericOnlySource' } ]
-          5:
-            patterns: [ { include: '#numericOnlySource' } ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(READ)'
-        beginCaptures:
-          1:
-            name: 'keyword.data.bbc'
-        patterns: [
-          {
-            match: '[,]'
-          }
-          { include: '#stringVariableName' }
-          { include: '#numericVariableName' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(DATA)'
-        beginCaptures:
-          1:
-            name: 'keyword.data.bbc'
-        patterns: [
-          {
-            match: '[,]'
-          }
-          { include: '#stringSource' }
-          { include: '#numericSource' }
-        ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(DEF\\s*FN)([A-Za-z]+[A-Za-z0-9_]*)([(].*[)])?'
-        beginCaptures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            name: 'entity.function.name.bbc'
-          3:
-            name: 'meta.function.parameters.bbc'
-            patterns: [
-              { include: '#stringVariableName' }
-              { include: '#numericVariableName' }
-              { match: '[,]' }
-            ]
-        end: '(?=:)'
-      }
-      {
-        begin: '(DEF\\s*PROC)([A-Za-z]+[A-Za-z0-9_]*)([(].*[)])?'
-        beginCaptures:
-          1:
-            name: 'keyword.control.bbc'
-          2:
-            name: 'entity.function.name.bbc'
-          3:
-            patterns: [
-              { include: '#stringVariableName' }
-              { include: '#numericVariableName' }
-              { match: ',' }
-            ]
-        patterns: [
-          { include: '#line' }
-        ]
-        end: '(END\\s*PROC)'
-        endCaptures:
-          1:
-            name: 'keyword.control.bbc'
-      }
-      {
-        begin: '(DIM)\\s*([A-Za-z]+[A-Za-z0-9_]*[$%]?)\\s*[(]'
-        beginCaptures:
-          1:
-            name: 'keyword.data.bbc'
-          2:
-            patterns: [
-              { include: '#stringVariableName' }
-              { include: '#integerVariableName' }
-              { include: '#numericVariableName' }
-            ]
-        patterns: [
-          {
-            match: '[,]'
-          }
-          { include: '#numericOnlySource' }
-        ]
-        end: '[)]'
-      }
-      {
-        begin: '(VDU)(.*)'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              {
-                match: '[;,]'
-              }
-              { include: '#numericOnlySource' }
-            ]
-        end: '(?=:)'
-      }
-    ]
-  condition:
-    patterns: [
-      {
-        name: 'meta.conditional.test.bbc'
-        match: '(.+)\\s*(<>)\\s*(.+)'
-        captures:
-          1:
-            patterns: [
-              { include: '#stringSource' }
-              { include: '#numericSource' }
-            ]
-          2:
-            name: 'meta.conditional.punctuation.bbc'
-          3:
-            patterns: [
-              { include: '#stringSource' }
-              { include: '#numericSource' }
-            ]
-      }
-      {
-        name: 'meta.conditional.test.bbc'
-        match: '(.+)\\s*([=><])\\s*(.+)'
-        captures:
-          1:
-            patterns: [
-              { include: '#stringSource' }
-              { include: '#numericSource' }
-            ]
-          2:
-            name: 'meta.conditional.punctuation.bbc'
-          3:
-            patterns: [
-              { include: '#stringSource' }
-              { include: '#numericSource' }
-            ]
-      }
-    ]
-  stringSource:
-    patterns: [
-      { include: '#stringReturnFunction' }
-      { include: '#stringConstant' }
-      { include: '#stringVariableName' }
-      { include: '#stringOperation' }
-    ]
-  stringOperation:
-    patterns: [
-      {
-        begin: '\\('
-        end: '\\)'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-      {
-        match: '[+]'
-      }
-    ]
-  stringReturnFunction:
-    patterns: [
-      {
-        begin: '(CHR\\$)'
-        beginCaptures:
-          1:
-            name: 'keyword.chr.bbc'
-        end: '(?=[:;])'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        begin: '(EVAL)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.eval.bbc'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-      {
-        match: '(GET\\$)'
-        name: 'keyword.io.bbc'
-      }
-      {
-        begin: '(INKEY\\$)\\((.*)\\)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        begin: '(LEFT\\$|RIGHT\\$)\\((.*),(.*)\\)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        begin: '(MID\\$)\\((.*),(.*),(.*)\\)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          4:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(STR\\$)(.+)'
-        captures:
-          1:
-            name: 'keyword.bbc'
-          2:
-            patterns: [
-              { include: '#numericSource' }
-            ]
-      }
-      {
-        match: '(STRING\\$)\\((.+),(.+)\\)'
-        captures:
-          1:
-            name: 'keyword.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          3:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-      }
-    ]
-  numericOnlySource:
-    patterns: [
-      { include: '#numericSource' }
-      { include: '#invalid' }
-    ]
-  numericSource:
-    patterns: [
-      {
-        match: 'FALSE|TRUE'
-        name: 'constant.bool.literal.bbc'
-      }
-      {
-        match: 'PI\\b'
-        name: 'constant.real.literal.bbc'
-      }
-      { include: '#numericReturnFunction' }
-      { include: '#numericConstant' }
-      { include: '#numericOperation' }
-      { include: '#integerVariableName' }
-      { include: '#numericVariableName' }
-    ]
-  numericOperation:
-    patterns: [
-      {
-        begin: '\\('
-        patterns: [
-          { include: '#numericSource' }
-        ]
-        end: '\\)'
-      }
-      {
-        match: '\\+|-|\\*|/'
-        name: 'punctation.math.operator.bbc'
-      }
-      {
-        match: '(NOT|AND|DIV|MOD|OR)'
-        name: 'keyword.bbc'
-      }
-    ]
-  numericReturnFunction:
-    patterns: [
-      {
-        begin: '(ABS|ACS|ASN|ATN|COS|DEG|EXP|INT|LN|LOG|RAD|RND|SGN|SIN|SQR|TAN)'
-        end: '(?=[:;)])'
-        beginCaptures:
-          1:
-            name: 'keyword.math.bbc'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        begin: '(ADVAL|EXT)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.io.bbc'
-        patterns: [
-          { include: '#numericOnlySource' }
-        ]
-      }
-      {
-        begin: '(ASC|LEN)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.bbc'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-      {
-        match: 'COUNT|GET|POS|VPOS'
-        name: 'keyword.io.bbc'
-      }
-      {
-        match: 'ERL|ERR'
-        name: 'keyword.error.bbc'
-      }
-      {
-        begin: '(EVAL)'
-        end: '(?=[:;])'
-        beginCaptures:
-          1:
-            name: 'keyword.eval.bbc'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-      {
-        match: '(INKEY)\\((.*)\\)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(INSTR)\\((.+),(.+),(.+)\\)'
-        captures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-          3:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-          4:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(INSTR)\\((.+),(.+)\\)'
-        captures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-          3:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-      }
-      {
-        match: '(OPENIN|OPENOUT)(.+)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-      }
-      {
-        match: '(BGET\\s*[#])\\s*(.+)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(POINT)\\((.+),(.+)\\)'
-        captures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(VAL\\s*[(](.*?)[)])'
-        captures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-          2:
-            patterns: [
-              { include: '#stringSource' }
-            ]
-      }
-      {
-        match: '(VAL)(.*)'
-        captures:
-          1:
-            name: 'keyword.stringfunction.bbc'
-        patterns: [
-          { include: '#stringSource' }
-        ]
-      }
-    ]
-  numericConstant:
-    patterns: [
-      {
-        match: '[-]?[0-9]*\\.?[0-9]+'
-        name: 'constant.numeric.decimal.bbc'
-      }
-      {
-        match: '&[0-9A-F]+'
-        name: 'constant.numeric.hex.bbc'
-      }
-    ]
-  stringConstant:
-    begin: '"'
-    end: '"'
-    name: 'string.quoted.double.bbc'
-
-  variableName:
-    patterns: [
-      { include: '#stringVariableName' }
-      { include: '#integerVariableName' }
-      { include: '#numericVariableName' }
-    ]
-  stringVariableName:
-    match: '[A-Za-z]+[0-9A-Za-z_]*[$]'
-    name: 'entity.string.variable.name'
-  integerVariableName:
-    match: '([A-Za-z]+[0-9A-Za-z_]*[%])|(@%)'
-    name: 'entity.numeric.integer.variable.name'
-  numericVariableName:
-    match: '[A-Za-z]+[0-9A-Za-z_]*'
-    name: 'entity.numeric.variable.name'
-
-  formatFunctions:
-    patterns: [
-      { match: '\\s*;\\s' }
-      {
-        match: '(SPC)(.+)'
-        captures:
-          1:
-            name: 'keyword.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(TAB)\\((.+?),(.+?)\\)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-          3:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-      {
-        match: '(TAB)\\((.+)\\)'
-        captures:
-          1:
-            name: 'keyword.io.bbc'
-          2:
-            patterns: [
-              { include: '#numericOnlySource' }
-            ]
-      }
-    ]
-numericCommaList:
-  name: 'meta.numeric.comma.list.bbc'
-  match: ',(.+)'
-  captures:
-    1:
-      patterns: [
-        { include: '#numericSource' }
-        { include: '#numericCommaList' }
-      ]
+        'name': 'entity.name.function.prototype.bbcbasic'
+    'match': '\\b(?i:(DEF|PROC|DEFPROC))\\b\\s+(\\w+(\\.\\w+)?)(\\(.*?\\))?;\\s*(?=(?i:attribute|forward|external))'
+    'name': 'meta.function.prototype.bbcbasic'
+  }
+  {
+    'captures':
+      '1':
+        'name': 'storage.type.function.bbcbasic'
+      '2':
+        'name': 'entity.name.function.bbcbasic'
+    'match': '\\b(?i:(DEF|PROC|DEFPROC))\\b\\s+(\\w+(\\.\\w+)?)'
+    'name': 'meta.function.bbcbasic'
+  }
+  {
+    'match': '\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b'
+    'name': 'constant.numeric.bbcbasic'
+  }
+  # {
+  #   'match': '\\b(?i:(REM))\\b'
+  #   'name': 'comment.line.bbcbasic'
+  # }
+  {
+    match: '(REM)(.*)'
+    captures:
+        1:
+          name: 'keyword.rem.bbc'
+        2:
+          name: 'comment.line.bbc'
+    }
+  # {
+  #   'begin': '(^[ \\t]+)?(?=//)'
+  #   'beginCaptures':
+  #     '1':
+  #       'name': 'punctuation.whitespace.comment.leading.pascal'
+  #   'end': '(?!\\G)'
+  #   'patterns': [
+  #     {
+  #       'begin': '//'
+  #       'beginCaptures':
+  #         '0':
+  #           'name': 'punctuation.definition.comment.pascal'
+  #       'end': '\\n'
+  #       'name': 'comment.line.double-slash.pascal.two'
+  #     }
+  #   ]
+  # }
+  # {
+  #   'begin': '\\(\\*'
+  #   'captures':
+  #     '0':
+  #       'name': 'punctuation.definition.comment.pascal'
+  #   'end': '\\*\\)'
+  #   'name': 'comment.block.pascal.one'
+  # }
+  # {
+  #   'begin': '\\{'
+  #   'captures':
+  #     '0':
+  #       'name': 'punctuation.definition.comment.pascal'
+  #   'end': '\\}'
+  #   'name': 'comment.block.pascal.two'
+  # }
+  # {
+  #   'begin': '"'
+  #   'beginCaptures':
+  #     '0':
+  #       'name': 'punctuation.definition.string.begin.pascal'
+  #   'comment': 'Double quoted strings are an extension and (generally) support C-style escape sequences.'
+  #   'end': '("|\\n)'
+  #   'endCaptures':
+  #     '0':
+  #       'name': 'punctuation.definition.string.end.pascal'
+  #   'name': 'string.quoted.double.pascal'
+  #   'patterns': [
+  #     {
+  #       'match': '\\\\.'
+  #       'name': 'constant.character.escape.pascal'
+  #     }
+  #   ]
+  # }
+  # {
+  #   'applyEndPatternLast': 1
+  #   'begin': '\''
+  #   'beginCaptures':
+  #     '0':
+  #       'name': 'punctuation.definition.string.begin.pascal'
+  #   'end': '(\'|\\n)'
+  #   'endCaptures':
+  #     '0':
+  #       'name': 'punctuation.definition.string.end.pascal'
+  #   'name': 'string.quoted.single.pascal'
+  #   'patterns': [
+  #     {
+  #       'match': '\'\''
+  #       'name': 'constant.character.escape.apostrophe.pascal'
+  #     }
+  #   ]
+  # }
+]
+'scopeName': 'source.bbcbasic'

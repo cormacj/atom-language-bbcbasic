@@ -146,3 +146,11 @@ A=10+1
 
 
 LET A$="ABC:" : REM Good job
+
+PRINT "hello world":A=1
+FOR X=0 TO MAX
+CH(X)=?(&C000+126+X)
+NEXT
+
+CHR$(90)
+10 REM testing

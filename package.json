@@ -1,11 +1,11 @@
 {
   "name": "language-bbc-basic",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Language support for BBC Basic",
-  "homepage": "https://github.com/damieng/atom-language-bbcbasic",
+  "homepage": "https://github.com/cormacj/atom-language-bbcbasic",
   "repository": {
     "type": "git",
-    "url": "https://github.com/damieng/atom-language-bbcbasic.git"
+    "url": "https://github.com/cormacj/atom-language-bbcbasic.git"
   },
   "license": "MIT",
   "keywords": [
